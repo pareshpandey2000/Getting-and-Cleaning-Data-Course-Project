@@ -1,0 +1,165 @@
+---
+title: "README"
+author: "Me"
+date: "7/19/2020"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# **Getting and Cleaning Data Course Project**
+
+## **About data**
+
+Project required working on data collected by Samsung Galaxy S smartphone through its embedded accelerometer and gyroscope.The experiments have been carried out with a group of 30 volunteers within an age bracket of 19-48 years.The obtained dataset has been randomly partitioned into two sets, where 70% of the volunteers was selected for generating the training data and 30% the test data.
+
+## **run_analysis script**
+run_analysis performs the following steps:
+- Goes to working directory and reads all UCI data files into variables.
+- Appropriately labels the data set with descriptive variable names.
+- Uses descriptive activity names to name the activities in the data set.
+- Merges the training and the test sets to create one data set.
+- Extracts only the measurements on the mean and standard deviation for each measurement.
+- From the data set created above, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
+
+### **Code book**
+
+#### Variables for setting path for data files
+
+  - pathwd: Path for working directory
+  - pathX_train: Path for X_train.txt consisting of all measurement reading for Train data
+  - pathsubject_train: Path for subject_train.txt containing info on subject who performed the activity for each window sample in Train data
+  - pathy_train: Path for y_train.txt containing info on Training labels
+  - pathX_test: Path for X_test.txt consisting of all measurement reading for Train data
+  - pathsubject_test: Path for subject_test.txt containing info on subject who performed the activity for each window sample in Test data
+  - pathy_test: Path for y_test.txt containing info on Test labels
+  - pathfeatures :Path for features.txt that contains list of all features
+  - pathactivity_labels: Path for activity_labels.txt that links the class labels with their activity name.
+  
+#### Variables into which data files are read
+
+  - trainreading: Reads data of X_train.txt
+  - trainsubject: Reads data of subject_train.txt
+  - trainactivities: Reads data of y_train.txt
+  - testreading: Reads data of X_test.txt
+  - testsubject: Reads data of subject_test.txt
+  - testactivities: Reads data of y_test.txt
+  - featuredata: Reads data of features.txt.txt
+  - activitycode: Reads data of activity_labels.txt
+  
+#### Variables corresponding to merged datas
+
+  - traindata: Data frame wherein train data pertaining to readings,subject and activities is merged
+  - testdata: Data frame wherein test data pertaining to readings,subject and activities is merged
+  - dataAll: traindata and testdata varaibles are merged
+  
+#### Variables corresponding to mean and std dev column indices
+
+  meancolnumbers: Captures the indices of all columns containing mean in a list
+  stdcolnumbers: Captures the indices of all columns containing std in a list
+
+#### Activity label variables
+activitycode1 to activitycode6 contains activity labels for activity code 1 to 6
+
+#### grpby variable
+
+grpby is dataAll variable grouped by Subject and Activity
+
+#### seconddata variable
+
+seconddata is the data set with the average of each variable for each activity and each subject.
+
+### **Code**
+
+
+#### Setting path for various files in working directory
+  
+  pathwd<-getwd()
+  pathX_train<-paste(pathwd,"/X_train.txt",sep="")
+  pathsubject_train<-paste(pathwd,"/subject_train.txt",sep="")
+  pathy_train<-paste(pathwd,"/y_train.txt",sep="")
+  pathX_test<-paste(pathwd,"/X_test.txt",sep="")
+  pathsubject_test<-paste(pathwd,"/subject_test.txt",sep="")
+  pathy_test<-paste(pathwd,"/y_test.txt",sep="")
+  pathfeatures<-paste(pathwd,"/features.txt",sep="")
+  pathactivity_labels<-paste(pathwd,"/activity_labels.txt",sep="")
+
+#### Reading all data files basis the path established above
+  
+  trainreading<-read.table(pathX_train,header = FALSE)
+  trainsubject<-read.table(pathsubject_train,header = FALSE)
+  trainactivities<-read.table(pathy_train,header = FALSE)
+  testreading<-read.table(pathX_test,header = FALSE)
+  testsubject<-read.table(pathsubject_test,header = FALSE)
+  testactivities<-read.table(pathy_test,header = FALSE)
+  featuredata<-read.table(pathfeatures,header = FALSE)
+  activitycode<-read.table(pathactivity_labels,header = FALSE)
+  
+#### Giving a column name to the subject data in Train and Test data sets
+
+ names(trainsubject)<-"Subject"
+ names(testsubject)<-"Subject"
+ 
+#### Giving a column name to the Activity data in Train and Test data sets
+
+ names(trainactivities)<-"Activity"
+ names(testactivities)<-"Activity"
+ 
+#### Giving a column name to Features data
+
+ names(featuredata)<-c("SNO","feature")
+ 
+#### Populating features data as column names in Train and Test data measurements
+ 
+ names(trainreading)<-featuredata[,"feature"]
+ names(testreading)<-featuredata[,"feature"]
+ 
+#### Combining Subject and Activities with measurements for Train and Test data 
+
+  traindata<-cbind(trainsubject,trainactivities,trainreading)
+  testdata<-cbind(testsubject,testactivities,testreading)
+  
+#### Combining Train and Test data
+
+  dataAll<-rbind(traindata,testdata)
+  
+#### Finding columns having mean and std 
+  
+  meancolnumbers<-grep("mean",names(dataAll))
+  stdcolnumbers<-grep("std",names(dataAll))
+
+#### Selecting only columns having mean and std along with Subject and Activity 
+  
+ 
+  dataAll<-select(dataAll,"Subject","Activity",all_of(meancolnumbers),all_of(stdcolnumbers))
+  
+#### Extracting activity labels
+  
+  activitycode1<-activitycode[1,2];activitycode2<-activitycode[2,2]
+  activitycode3<-activitycode[3,2];activitycode4<-activitycode[4,2]
+  activitycode5<-activitycode[5,2];activitycode6<-activitycode[6,2]
+
+#### Replacing codes 1-6 in activity column with corresponding labels
+  
+  dataAll[,"Activity"][dataAll[,"Activity"]==1]<-activitycode1
+  dataAll[,"Activity"][dataAll[,"Activity"]==2]<-activitycode2
+  dataAll[,"Activity"][dataAll[,"Activity"]==3]<-activitycode3
+  dataAll[,"Activity"][dataAll[,"Activity"]==4]<-activitycode4
+  dataAll[,"Activity"][dataAll[,"Activity"]==5]<-activitycode5
+  dataAll[,"Activity"][dataAll[,"Activity"]==6]<-activitycode6
+  
+  
+#### Used "group_by_" which is counterpart of "group_by" for programming
+#### grouped the data by subject and activity
+  
+  grpby<-group_by_(dataAll,"Subject","Activity")
+
+#### Summarized the data by mean and returned it
+  
+ seconddata<-summarize_all(grpby,list(mean))
+  
+ seconddata
