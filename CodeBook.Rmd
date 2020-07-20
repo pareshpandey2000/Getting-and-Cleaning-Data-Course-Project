@@ -1,0 +1,57 @@
+---
+title: "CodeBook"
+author: "Me"
+date: "7/20/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### **Code book**
+
+#### Variables for setting path for data files
+
+  - pathwd: Path for working directory
+  - pathX_train: Path for X_train.txt consisting of all measurement reading for Train data
+  - pathsubject_train: Path for subject_train.txt containing info on subject who performed the activity for each window sample in Train data
+  - pathy_train: Path for y_train.txt containing info on Training labels
+  - pathX_test: Path for X_test.txt consisting of all measurement reading for Train data
+  - pathsubject_test: Path for subject_test.txt containing info on subject who performed the activity for each window sample in Test data
+  - pathy_test: Path for y_test.txt containing info on Test labels
+  - pathfeatures :Path for features.txt that contains list of all features
+  - pathactivity_labels: Path for activity_labels.txt that links the class labels with their activity name.
+  
+#### Variables into which data files are read
+
+  - trainreading: Reads data of X_train.txt
+  - trainsubject: Reads data of subject_train.txt
+  - trainactivities: Reads data of y_train.txt
+  - testreading: Reads data of X_test.txt
+  - testsubject: Reads data of subject_test.txt
+  - testactivities: Reads data of y_test.txt
+  - featuredata: Reads data of features.txt.txt
+  - activitycode: Reads data of activity_labels.txt
+  
+#### Variables corresponding to merged datas
+
+  - traindata: Data frame wherein train data pertaining to readings,subject and activities is merged
+  - testdata: Data frame wherein test data pertaining to readings,subject and activities is merged
+  - dataAll: traindata and testdata varaibles are merged
+  
+#### Variables corresponding to mean and std dev column indices
+
+  meancolnumbers: Captures the indices of all columns containing mean in a list
+  stdcolnumbers: Captures the indices of all columns containing std in a list
+
+#### Activity label variables
+activitycode1 to activitycode6 contains activity labels for activity code 1 to 6
+
+#### grpby variable
+
+grpby is dataAll variable grouped by Subject and Activity
+
+#### seconddata variable
+
+seconddata is the data set with the average of each variable for each activity and each subject.
